@@ -1,0 +1,214 @@
+<%- include('../partials/header') %>
+<style>
+    /*
+*
+* ==========================================
+* CUSTOM UTIL CLASSES
+* ==========================================
+*
+*/
+    #upload {
+        opacity: 0;
+    }
+
+    #upload-label {
+        position: absolute;
+        top: 30%;
+        left: 1rem;
+        transform: translateY(-50%);
+    }
+
+    .image-area {
+        border: 2px dashed rgba(255, 255, 255, 0.7);
+        padding: 1rem;
+        position: relative;
+    }
+
+    .image-area::before {
+        content: 'Uploaded image result';
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.8rem;
+        z-index: 1;
+    }
+
+    .image-area img {
+        z-index: 2;
+        position: relative;
+    }
+
+    #imageResult {
+        height: 100px;
+    }
+
+    .box-upload {
+        box-sizing: border-box;
+        box-shadow: rgba(49, 53, 59, 0.12) 0px 1px 6px;
+        border-radius: 8px;
+        margin-right: 12px;
+        background: rgb(255, 255, 255);
+        border: 1px solid rgb(79, 209, 90);
+        width: 130px;
+        height: 130px;
+    }
+
+    .content-upload {
+        display: flex;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        place-content: center;
+        width: inherit;
+        height: inherit;
+        -webkit-box-align: center;
+        align-items: center;
+    }
+
+    .css-1rd7url {
+        background-image: url(https://assets.tokopedia.net/assets-tokopedia-lite/v2/icarus/kratos/ec5ed6c9.svg);
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+
+    .css-17t9ldh {
+        padding-top: 12px;
+        font-family: "Open Sans";
+        font-style: normal;
+        font-weight: normal;
+        font-size: 1rem;
+        line-height: 20px;
+        color: rgba(49, 53, 59, 0.32);
+    }
+
+    /*
+*
+* ==========================================
+* FOR DEMO PURPOSES
+* ==========================================
+*
+*/
+</style>
+
+<body>
+    <div class="wrapper">
+        <!-- Start page content -->
+        <section id="page-content" class="page-wrapper">
+
+            <!-- LOGIN SECTION START -->
+            <div class="login-section pt-50 pb-70">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                            <div class="registered-customers mb-50">
+                                <h5 class="mb-50">Tambah Iklan Rumah</h5>
+                                <form action="#">
+                                    <div class="login-account p-30 box-shadow">
+                                        <p>If you have an account with us, Please log in.</p>
+                                        <input type="text" name='alamat_lengkap' id='alamat_lengkap'
+                                            placeholder="Alamat Lengkap">
+                                        <input type="text" name='harga' id='harga' placeholder="Harga">
+                                        <input type="text" name='ukuran' id='ukuran' placeholder="Ukuran">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="text" name='lattitude' id='lattitude'
+                                                    placeholder="Lattitude">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="text" name='longitude' id='longitude'
+                                                    placeholder="Longitude">
+                                            </div>
+                                        </div>
+                                        <input type="text" name='deskripsi' id='deskripsi' placeholder="Deskripsi">
+                                        <div class="row">
+                                            <div class="col-sm-6 col-xs-12">
+                                                <button class="submit-btn-1 mt-20" type="submit">Simpan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- new-customers -->
+                        <div class="col-md-6 col-xs-12">
+                            <div class="new-customers mb-50">
+                                <h5 class="mb-50"></h5>
+                                <form id="form-register">
+                                    <div class="login-account p-30 box-shadow">
+                                        <!-- Upload image input-->
+                                        <input id="upload" type="file" onchange="readURL(this);"
+                                            class="form-control border-0" style="display: none">
+
+                                        <label for="upload">
+                                            <div class="box-upload" id="upload-label">
+                                                <div class="content-upload">
+                                                    <img id="imageResult" src="https://assets.tokopedia.net/assets-tokopedia-lite/v2/icarus/kratos/ec5ed6c9.svg" alt="" class="img-fluid rounded mx-auto d-block">
+                                                    <!-- <div class="css-1rd7url"></div> -->
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <!-- <label id="upload-label" for="upload" class="font-weight-light text-muted">Choose file</label> -->
+                                        <!-- <div class="input-group-append">
+                                            <label for="upload" class="btn btn-light m-0 rounded-pill px-4"> 
+                                                <i class="fa fa-cloud-upload mr-2 text-muted"></i>
+                                                <small class="text-uppercase font-weight-bold text-muted">Choose file</small>
+                                            </label>
+                                        </div> -->
+                                        <!-- <div class="image-area mt-4"><img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div> -->
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- LOGIN SECTION END -->
+
+        </section>
+        <!-- End page content -->
+    </div>
+    <script>
+        /*  ==========================================
+    SHOW UPLOADED IMAGE
+* ========================================== */
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imageResult')
+                        .attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(function () {
+            $('#upload').on('change', function () {
+                readURL(input);
+            });
+        });
+
+        /*  ==========================================
+            SHOW UPLOADED IMAGE NAME
+        * ========================================== */
+        var input = document.getElementById('upload');
+        var infoArea = document.getElementById('upload-label');
+
+        // input.addEventListener('change', showFileName);
+        // function showFileName(event) {
+        //     var input = event.srcElement;
+        //     var fileName = input.files[0].name;
+        //     infoArea.textContent = 'File name: ' + fileName;
+        // }
+
+
+    </script>
+</body>
+<%- include('../partials/footer') %>
