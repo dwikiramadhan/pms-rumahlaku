@@ -12,10 +12,13 @@ var usersRouter = require('./routes/users')(db);
 var ApiRouter = require('./routes/api')(db);
 
 var app = express();
+var moment = require('moment');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.locals.moment = require('moment');
 
 app.use(logger('dev'));
 app.use(express.json());

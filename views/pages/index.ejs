@@ -1,4 +1,23 @@
 <%- include('../partials/header') %>
+<style>
+    li button {
+        background: #f5f5f5 none repeat scroll 0 0;
+        border-radius: 50%;
+        color: #606060;
+        display: block;
+        font-weight: 600;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        width: 40px;
+    }
+
+    .active {
+        background: #95c41f none repeat scroll 0 0;
+        color: white;
+    }
+</style>
+
 <body>
     <div class="wrapper">
 
@@ -59,7 +78,7 @@
             <!-- FIND HOME AREA END -->
 
             <!-- FEATURED FLAT AREA START -->
-            <div class="featured-flat-area pt-30 pb-80">
+            <div class="featured-flat-area pt-30 pb-80" id="app">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
@@ -70,19 +89,21 @@
                     </div>
                     <div class="featured-flat">
                         <div class="row">
+
                             <!-- flat-item -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-md-4 col-sm-6 col-xs-12" v-for="res in displayedPosts">
                                 <div class="flat-item">
                                     <div class="flat-item-image">
-                                        <span class="for-sale">For Sale</span>
+                                        <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
+                                        <span class="for-sale rent" v-if="res.kategori == 0">Disewakan</span>
                                         <a href="properties-details.html"><img src="images/1.jpg" alt=""></a>
                                         <div class="flat-link">
-                                            <a href="properties-details.html">More Details</a>
+                                            <a :href="'/properties-details/' + res.id_iklan">More Details</a>
                                         </div>
                                         <ul class="flat-desc">
                                             <li>
                                                 <img src="images/icons/4.png" alt="">
-                                                <span>450 sqft</span>
+                                                <span>{{ res.ukuran }} m<sup>2</sup></span>
                                             </li>
                                             <li>
                                                 <img src="images/icons/5.png" alt="">
@@ -96,127 +117,106 @@
                                     </div>
                                     <div class="flat-item-info">
                                         <div class="flat-title-price">
-                                            <h5><a href="properties-details.html">Masons de Villa </a></h5>
-                                            <span class="price">$52,350</span>
-                                        </div>
-                                        <p><img src="images/icons/location.png" alt="">568 E 1st Ave, Ney Jersey</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- flat-item -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="flat-item">
-                                    <div class="flat-item-image">
-                                        <a href="properties-details.html"><img src="images/2.jpg" alt=""></a>
-                                        <div class="flat-link">
-                                            <a href="properties-details.html">More Details</a>
-                                        </div>
-                                        <ul class="flat-desc">
-                                            <li>
-                                                <img src="images/icons/4.png" alt="">
-                                                <span>450 sqft</span>
-                                            </li>
-                                            <li>
-                                                <img src="images/icons/5.png" alt="">
-                                                <span>5</span>
-                                            </li>
-                                            <li>
-                                                <img src="images/icons/6.png" alt="">
-                                                <span>3</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="flat-item-info">
-                                        <div class="flat-title-price">
-                                            <h5><a href="properties-details.html">Masons de Villa </a></h5>
-                                            <span class="price">$52,350</span>
-                                        </div>
-                                        <p><img src="images/icons/location.png" alt="">568 E 1st Ave, Ney Jersey</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- flat-item -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="flat-item">
-                                    <div class="flat-item-image">
-                                        <span class="for-sale rent">For rent</span>
-                                        <a href="properties-details.html"><img src="images/3.jpg" alt=""></a>
-                                        <div class="flat-link">
-                                            <a href="properties-details.html">More Details</a>
-                                        </div>
-                                        <ul class="flat-desc">
-                                            <li>
-                                                <img src="images/icons/4.png" alt="">
-                                                <span>450 sqft</span>
-                                            </li>
-                                            <li>
-                                                <img src="images/icons/5.png" alt="">
-                                                <span>5</span>
-                                            </li>
-                                            <li>
-                                                <img src="images/icons/6.png" alt="">
-                                                <span>3</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="flat-item-info">
-                                        <div class="flat-title-price">
-                                            <h5><a href="properties-details.html">Masons de Villa </a></h5>
-                                            <span class="price">$52,350</span>
+                                            <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
+                                            <span class="price">Rp. {{ res.harga }}</span>
                                         </div>
                                         <p><img src="images/icons/location.png" alt="">568 E 1st Ave, Ney Jersey</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- ELEMENTS AREA START -->
-                    <div class="">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="pagination-area">
-                                        <ul class="pagination-list text-center">
-                                            <li><a href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a></li>
-                                            <li><a href="#">1</a></li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                            <li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- ELEMENTS AREA END -->
-                </div>
-            </div>
-            <!-- FEATURED FLAT AREA END -->
 
-            <!-- DRAG & DROP -->
-            <div class="featured-flat-area pt-30 pb-80">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="section-title-2" style="margin: 0px">
-                                <h2>Bandingkan</h2>
+                        <!-- ELEMENTS AREA START -->
+                        <div class="">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="pagination-area">
+                                            <ul class="pagination-list text-center">
+                                                <li v-if="current == 1"><a><i class="fa fa-angle-left" aria-hidden="true"></i></a></li>
+                                                <li v-else><button @click.prevent="getPosts(previous_page)"><i class="fa fa-angle-left" aria-hidden="true"></i></button></li>
+                                                <li v-for="pg in pages">
+                                                    <button v-if="pg == current" class="active">{{ pg }}</button>
+                                                    <button v-else @click.prevent="getPosts(pg)">{{ pg }}</button>
+                                                </li>
+                                                <li v-if="current == pages"><a><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                                <li v-else><button @click.prevent="getPosts(next_page)"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ELEMENTS AREA END -->
+                    </div>
+                </div>
+                <!-- FEATURED FLAT AREA END -->
+
+                <!-- DRAG & DROP -->
+                <div class="featured-flat-area pt-30 pb-80">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="section-title-2" style="margin: 0px">
+                                    <h2>Bandingkan</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="featured-flat">
+                            <div class="row">
+                                <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                                <br>
                             </div>
                         </div>
                     </div>
-                    <div class="featured-flat">
-                        <div class="row">
-                            <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                            <br>
-                        </div>
-                    </div>
                 </div>
-            </div>
-            <!-- DRAG END DROP END -->
+                <!-- DRAG END DROP END -->
         </section>
     </div>
     <script>
-        console.log()
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue',
+                resData: [],
+                current: 1,
+                pages: null,
+                next_page: null,
+                previous_page: null
+            },
+            methods: {
+                pg_click(pg) {
+                    this.current = pg;
+                },
+                getPosts(curpage){
+                    axios
+                    .get(`http://localhost:3000/api/index/iklan/${curpage}`)
+                    .then(response => {
+                        this.resData = response.data.data
+                        this.current = response.data.current
+                        this.pages = response.data.pages
+                        this.next_page = response.data.next_page
+                        this.previous_page = response.data.previous_page
+                    })
+                },
+                currentPG(){
+                    this.current++
+                }
+            },
+            computed: {
+                displayedPosts(){
+                    return this.resData
+                }
+            },
+            created(){
+                this.getPosts(this.current);
+            },
+            mounted() {
+                
+            }
+        })
+
         function allowDrop(ev) {
             ev.preventDefault();
         }

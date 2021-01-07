@@ -47,7 +47,7 @@
 *************************/
 body {
   background: #fff;
-  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Montserrat', sans-serif; */
   color: #3b5265;
   font-weight: 400;
   font-size: 14px;
@@ -120,7 +120,7 @@ h6,
 }
 h5, .h5,
 h6, .h6 {
-  font-family: 'Montserrat', sans-serif; 
+  /* font-family: 'Montserrat', sans-serif;  */
   font-weight: 400;
 }
 h1, .h1 {
@@ -181,7 +181,7 @@ li a {
 }
 p {
   color: #606060;
-  font-family: "Montserrat",sans-serif;
+  /* font-family: "Montserrat",sans-serif; */
   font-size: 14px;
   font-weight: 300;
   line-height: 24px;
@@ -191,7 +191,7 @@ p {
   font-family: "Raleway",sans-serif;
 }
 .g-font-2 {
-  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Montserrat', sans-serif; */
 }
 .font-w-5 {
   font-weight: 500;
@@ -392,7 +392,7 @@ input[type="date"] {
   background: transparent;
   border: 1px solid #e1e1e1;
   color: #606060;
-  font-family: 'Montserrat', sans-serif;  
+  /* font-family: 'Montserrat', sans-serif;   */
   font-size: 14px;
   font-weight: 300;
   height: 40px;
@@ -443,7 +443,7 @@ textarea:-moz-placeholder {
 button {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
   border: medium none;
-  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Montserrat', sans-serif; */
   font-weight: normal;
 }
 select {
@@ -463,7 +463,7 @@ textarea {
   background: #ffffff none repeat scroll 0 0;
   border: 1px solid #e1e1e1;
   color: #606060;
-  font-family: "Montserrat",sans-serif;
+  /* font-family: "Montserrat",sans-serif; */
   font-size: 13px;
   font-weight: 300;
   padding: 10px 10px 10px 20px;
@@ -501,7 +501,7 @@ textarea:focus {
   line-height: 38px;
   margin-bottom: 20px;
   width: 100%; 
-  font-family: 'montserrat';
+  /* font-family: 'montserrat'; */
   font-weight: 300;
 }
 .custom-select-2 option {

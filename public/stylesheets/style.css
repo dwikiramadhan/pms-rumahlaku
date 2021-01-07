@@ -173,7 +173,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 }
 .find-home-item.custom-select button {
-    font-family: 'montserrat';
+    /* font-family: 'montserrat'; */
     font-weight: 300;
 }
 /*widget shop-filter*/
@@ -293,7 +293,7 @@
 .for-sale {
     background: #95c41f none repeat scroll 0 0;
     color: #fff;
-    font-family: 'montserrat';
+    /* font-family: 'montserrat'; */
     font-size: 14px;
     font-weight: 600;
     left: 0;
@@ -336,7 +336,7 @@
 .flat-link > a {
     border: 1px solid #fff;
     color: #fff;
-    font-family: "montserrat";
+    /* font-family: "montserrat"; */
     font-size: 14px;
     font-weight: normal;
     padding: 9px 12px 10px;
@@ -377,7 +377,7 @@
 }
 .price {
     color: #95c41f;
-    font-family: "montserrat";
+    /* font-family: "montserrat"; */
     font-size: 22px;
     font-weight: 400;
 }
@@ -421,7 +421,7 @@
 }
 .features-include-list > h6 {
     color: #303030;
-    font-family: montserrat;
+    /* font-family: montserrat; */
     font-weight: 400;
 }
 .features-include-list img {
@@ -581,7 +581,7 @@
 }
 .testimonial-item h6 span {
     color: #606060;
-    font-family: montserrat;
+    /* font-family: montserrat; */
     font-size: 14px;
     font-weight: 300;
 }
@@ -804,7 +804,7 @@
 }
 .counter-item > h2 {
     color: #fff;
-    font-family: 'montserrat';
+    /* font-family: 'montserrat'; */
     font-size: 34px;
     font-weight: 400;
     margin-bottom: 0;
@@ -825,7 +825,7 @@
     width: 33%;
 }
 .counter-item-2 > h2 {
-    font-family: 'montserrat';
+    /* font-family: 'montserrat'; */
     font-size: 34px;
     font-weight: 400;
     margin-bottom: 0;
@@ -1422,13 +1422,13 @@
 }
 .error-content h2 {
     color: #95c41f;
-    font-family: "montserrat";
+    /* font-family: "montserrat"; */
     font-size: 180px;
     line-height: 1;
     margin-bottom: 40px;
 }
 .error-content h3 {
-    font-family: "montserrat";
+    /* font-family: "montserrat"; */
     font-size: 40px;
     font-weight: 600;
     margin-bottom: 22px;

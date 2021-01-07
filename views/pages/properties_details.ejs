@@ -1,0 +1,55 @@
+<%- include('../partials/header') %>
+
+<body>
+    <div class="wrapper" id="app" data-id="<%= id %>">
+        <!-- Start page content -->
+        <section id="page-content" class="page-wrapper" v-for="ads in posts">
+            <!-- ABOUT SHELTEK AREA START -->
+            <div class="about-sheltek-area ptb-50">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-pull-6 col-xs-12">
+                            <div class="about-image">
+                                <img src="/images/about/5.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-sm-push-6 col-xs-12">
+                            <div class="section-title mb-30">
+                                <h2>{{ ads.alamat }}</h2>
+                                <h2 style="color: #95c41f">Rp. {{ ads.harga }},-</h2>
+                            </div>
+                            <div class="about-sheltek-info">
+                                <p><span data-placement="top" data-toggle="tooltip" data-original-title="The name you can trust" class="tooltip-content">Rumah</span> {{ ads.deskripsi }}.</p>
+                                <div class="author-quote">
+                                    <p>{{ ads.ukuran }} m<sup>2</sup></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ABOUT SHELTEK AREA END -->
+        </section>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!',
+                id_iklan: null,
+                posts: []
+            },
+            mounted: function () {
+                this.id_iklan = this.$el.getAttribute('data-id');
+                axios
+                    .get(`http://localhost:3000/api/index/properties-details/${this.id_iklan}`)
+                    .then(response => {
+                        this.posts = response.data
+                    })
+                    .catch(e => { this.errors.push(e) })
+                
+            }
+        })
+    </script>
+</body>
+<%- include('../partials/footer') %>

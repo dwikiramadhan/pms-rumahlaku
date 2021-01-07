@@ -13,9 +13,12 @@
     "express-session": "^1.17.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "moment": "^2.29.1",
     "morgan": "~1.9.1",
     "pg": "^8.5.1",
-    "sweetalert2": "^10.12.7"
+    "sweetalert2": "^10.12.7",
+    "vue-moment": "^4.1.0",
+    "vue-session": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
