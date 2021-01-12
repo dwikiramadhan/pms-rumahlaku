@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const url = require('url');
 const crypto = require("crypto");
+const upload = require('express-fileupload');
+const FormData = require('form-data')
+const path = require('path')
 
 module.exports = function (db) {
     router.get('/', function (req, res) {
@@ -119,11 +122,11 @@ module.exports = function (db) {
 
     router.get('/properties-details/:id', (req, res) => {
         var { id } = req.params;
-        var sql = `SELECT * FROM iklan WHERE id_iklan = ${id}`;
+        var sql = `SELECT i.*, m.nama_lengkap, m.no_telp FROM iklan as i LEFT JOIN member as m ON i.id_member = m.id WHERE i.id_iklan = ${id}`;
         db.query(sql, (err, result) => {
             if (err) {
                 res.send('Gagal memuat data iklan')
-            }else{
+            } else {
                 res.json(result.rows)
             }
         })
@@ -158,9 +161,42 @@ module.exports = function (db) {
     })
 
     router.post('/iklan', (req, res) => {
-        var { alamat, harga, ukuran, coordinate, deskripsi, id_member, kategori } = req.body
-        var sql = `INSERT INTO iklan (alamat, harga, ukuran, coordinate, deskripsi, id_member, status, kategori, created_date) VALUES ('${alamat}', ${harga}, ${ukuran}, '${coordinate}', '${deskripsi}', ${id_member}, 0, ${kategori}, current_timestamp)`;
-        console.log(req.body)
+        var { alamat, harga, ukuran, coordinate, deskripsi, id_member, kategori, kamar_mandi, kamar_tidur, sertifikat, lantai } = req.body;
+
+        function makeid(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = mm + '_' + yyyy;
+
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
+        }
+        var filename = []
+        let sizeFiles = Object.keys(req.files.file).length;
+        for (let i = 0; i < sizeFiles; i++) {
+            // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+            let foto = req.files.file[i];
+            filename.push(today + '_' + makeid(10) + i + '.jpg');
+            // Use the mv() method to place the file somewhere on your server
+            foto.mv(path.join(__dirname, '..', 'public', 'images', 'uploads', filename[i]), function (err) {
+                if (err) return res.status(500).send(err);
+            });
+        }
+
+        const filenameRen = filename.join(',');
+
+        var sql = `INSERT INTO iklan (alamat, harga, ukuran, coordinate, deskripsi, gambar, id_member, status, kategori, created_date, kamar_mandi, kamar_tidur, sertifikat, lantai) VALUES ('${alamat}', ${harga}, ${ukuran}, '${coordinate}', '${deskripsi}', '${filenameRen}', ${id_member}, 0, ${kategori}, current_timestamp, ${kamar_mandi}, ${kamar_tidur}, '${sertifikat}', '${lantai}')`
         db.query(sql, (err, result) => {
             if (err) {
                 res.send('Gagal')

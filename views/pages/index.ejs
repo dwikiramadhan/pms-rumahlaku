@@ -33,7 +33,7 @@
                     <div class="row">
                         <div class="col-md-3 col-xs-12">
                             <div class="section-title text-white">
-                                <h3>FIND YOUR <%= isLogin %></h3>
+                                <h3>FIND YOUR</h3>
                                 <h2 class="h1">HOME HERE</h2>
                             </div>
                         </div>
@@ -96,7 +96,9 @@
                                     <div class="flat-item-image">
                                         <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
                                         <span class="for-sale rent" v-if="res.kategori == 0">Disewakan</span>
-                                        <a href="properties-details.html"><img src="images/1.jpg" alt=""></a>
+                                        <a href="properties-details.html">
+                                            <img v-bind:src="'/images/uploads/' + imagesArray[0]" alt="">
+                                        </a>
                                         <div class="flat-link">
                                             <a :href="'/properties-details/' + res.id_iklan">More Details</a>
                                         </div>
@@ -107,11 +109,11 @@
                                             </li>
                                             <li>
                                                 <img src="images/icons/5.png" alt="">
-                                                <span>5</span>
+                                                <span>{{ res.kamar_tidur ? res.kamar_tidur : '0' }}</span>
                                             </li>
                                             <li>
                                                 <img src="images/icons/6.png" alt="">
-                                                <span>3</span>
+                                                <span>{{ res.kamar_mandi ? res.kamar_mandi : '0' }}</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -120,7 +122,7 @@
                                             <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
                                             <span class="price">Rp. {{ res.harga }}</span>
                                         </div>
-                                        <p><img src="images/icons/location.png" alt="">568 E 1st Ave, Ney Jersey</p>
+                                        <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -207,6 +209,9 @@
             computed: {
                 displayedPosts(){
                     return this.resData
+                },
+                imagesArray() {
+                    return this.resData[0].gambar.split(',')
                 }
             },
             created(){

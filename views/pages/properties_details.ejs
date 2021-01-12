@@ -1,5 +1,11 @@
 <%- include('../partials/header') %>
 
+<style>
+    hr {
+        border-top: 1px solid rgb(229, 231, 233)
+    }
+</style>
+
 <body>
     <div class="wrapper" id="app" data-id="<%= id %>">
         <!-- Start page content -->
@@ -10,18 +16,100 @@
                     <div class="row">
                         <div class="col-sm-6 col-sm-pull-6 col-xs-12">
                             <div class="about-image">
-                                <img src="/images/about/5.jpg" alt="">
+                                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#carouselExampleIndicators" v-for="(item, index) in imagesArray" v-if="index == 0" data-slide-to="index" class="active"></li>
+                                        <li data-target="#carouselExampleIndicators" v-else data-slide-to="index"></li>
+                                        <!-- <li data-target="#carouselExampleIndicators" data-slide-to="2"></li> -->
+                                    </ol>
+                                    <div class="carousel-inner">
+                                        <div v-for="(item, index) in imagesArray" v-if="index == 0" class="carousel-item active">
+                                            <img class="d-block w-100" v-bind:src="'/images/uploads/' + item" alt="First slide">
+                                        </div>
+                                        <div v-else class="carousel-item">
+                                            <img class="d-block w-100" v-bind:src="'/images/uploads/' + item" alt="First slide">
+                                        </div>
+                                    </div>
+                                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                                        data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                                        data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-sm-push-6 col-xs-12">
                             <div class="section-title mb-30">
+                                <h5 class="badge bg-warning" style="color: white; font-size: 14px">
+                                    {{ ads.kategori == 1 ? 'DIJUAL' : 'DISEWAKAN' }}</h5>
                                 <h2>{{ ads.alamat }}</h2>
                                 <h2 style="color: #95c41f">Rp. {{ ads.harga }},-</h2>
                             </div>
                             <div class="about-sheltek-info">
-                                <p><span data-placement="top" data-toggle="tooltip" data-original-title="The name you can trust" class="tooltip-content">Rumah</span> {{ ads.deskripsi }}.</p>
-                                <div class="author-quote">
-                                    <p>{{ ads.ukuran }} m<sup>2</sup></p>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <p><span data-placement="top" data-toggle="tooltip"
+                                                data-original-title="The name you can trust"
+                                                class="tooltip-content">Contact </span></p>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <h5 class="badge bg-primary" style="color: white; font-size: 14px">
+                                            {{ ads.no_telp }}</h5>
+                                        <p>{{ ads.nama_lengkap }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <p><span data-placement="top" data-toggle="tooltip"
+                                                data-original-title="The name you can trust"
+                                                class="tooltip-content">Ukuran </span></p>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <div class="author-quote">
+                                            <p>{{ ads.ukuran }} m<sup>2</sup></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <p><span data-placement="top" data-toggle="tooltip"
+                                                data-original-title="The name you can trust"
+                                                class="tooltip-content">Kamar Tidur </span></p>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <div class="author-quote">
+                                            <p>{{ ads.kamar_tidur }} Unit</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <p><span data-placement="top" data-toggle="tooltip"
+                                                data-original-title="The name you can trust"
+                                                class="tooltip-content">Kamar Mandi </span></p>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <div class="author-quote">
+                                            <p>{{ ads.kamar_mandi }} Unit</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <p><span data-placement="top" data-toggle="tooltip"
+                                                data-original-title="The name you can trust"
+                                                class="tooltip-content">Deskripsi </span></p>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <p>{{ ads.deskripsi }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -37,7 +125,8 @@
             data: {
                 message: 'Hello Vue!',
                 id_iklan: null,
-                posts: []
+                posts: [],
+                image: []
             },
             mounted: function () {
                 this.id_iklan = this.$el.getAttribute('data-id');
@@ -47,7 +136,12 @@
                         this.posts = response.data
                     })
                     .catch(e => { this.errors.push(e) })
-                
+
+            },
+            computed: {
+                imagesArray: function() {
+                    return this.posts[0].gambar.split(',')
+                }
             }
         })
     </script>

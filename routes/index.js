@@ -4,10 +4,19 @@ const Swal = require('sweetalert2');
 var session = require('express-session');
 var moment = require('moment');
 
+const isLoggedin = (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/')
+  }else{
+    next();
+  }
+  // res.redirect('/')
+}
+
 module.exports = function (db) {
   /* GET home page. */
   router.get('/', function (req, res, next) {
-    console.log(req.session.user)
+    // console.log(req.session.user)
     res.render('pages/index', {
       title: 'Express',
       user: req.session.user,
@@ -23,12 +32,11 @@ module.exports = function (db) {
     });
   });
 
-  router.get('/add_ads', function (req, res, next) {
+  router.get('/add_ads', isLoggedin, (req, res) => {
     res.render('pages/add_ads', {
       title: 'Tambah Iklan',
       user: req.session.user,
       isLogin: req.session.loggedIn
-
     });
   });
 
@@ -43,7 +51,6 @@ module.exports = function (db) {
 
   router.get('/properties-details/:id', function (req, res, next) {
     const id = req.params.id
-    console.log(id)
     res.render('pages/properties_details', {
       title: 'Properties Details',
       user: req.session.user,
