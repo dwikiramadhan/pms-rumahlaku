@@ -16,6 +16,11 @@
         background: #95c41f none repeat scroll 0 0;
         color: white;
     }
+    #div1 {
+        box-shadow: rgba(49, 53, 59, 0.12) 0px 1px 6px;
+        border: 1px dashed #aaaaaa;
+        border-radius: 10px
+    }
 </style>
 
 <body>
@@ -91,13 +96,14 @@
                         <div class="row">
 
                             <!-- flat-item -->
-                            <div class="col-md-4 col-sm-6 col-xs-12" v-for="res in displayedPosts">
+                            <div class="col-md-4 col-sm-6 col-xs-12" v-for="(res, index) in displayedPosts"
+                                draggable="true" v-on:dragstart="dragStart" v-bind:id="res.id_iklan">
                                 <div class="flat-item">
                                     <div class="flat-item-image">
                                         <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
                                         <span class="for-sale rent" v-if="res.kategori == 0">Disewakan</span>
                                         <a href="properties-details.html">
-                                            <img v-bind:src="'/images/uploads/' + imagesArray[0]" alt="">
+                                            <img v-bind:src="'/images/uploads/' + res.gambar.split(',')[0]" alt="">
                                         </a>
                                         <div class="flat-link">
                                             <a :href="'/properties-details/' + res.id_iklan">More Details</a>
@@ -120,7 +126,8 @@
                                     <div class="flat-item-info">
                                         <div class="flat-title-price">
                                             <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
-                                            <span class="price">Rp. {{ res.harga }}</span>
+                                            <span class="price">Rp.
+                                                {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
                                         </div>
                                         <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}</p>
                                     </div>
@@ -135,14 +142,19 @@
                                     <div class="col-md-12">
                                         <div class="pagination-area">
                                             <ul class="pagination-list text-center">
-                                                <li v-if="current == 1"><a><i class="fa fa-angle-left" aria-hidden="true"></i></a></li>
-                                                <li v-else><button @click.prevent="getPosts(previous_page)"><i class="fa fa-angle-left" aria-hidden="true"></i></button></li>
+                                                <li v-if="current == 1"><a><i class="fa fa-angle-left"
+                                                            aria-hidden="true"></i></a></li>
+                                                <li v-else><button @click.prevent="getPosts(previous_page)"><i
+                                                            class="fa fa-angle-left" aria-hidden="true"></i></button>
+                                                </li>
                                                 <li v-for="pg in pages">
                                                     <button v-if="pg == current" class="active">{{ pg }}</button>
                                                     <button v-else @click.prevent="getPosts(pg)">{{ pg }}</button>
                                                 </li>
-                                                <li v-if="current == pages"><a><i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                                <li v-else><button @click.prevent="getPosts(next_page)"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                                                <li v-if="current == pages"><a><i class="fa fa-angle-right"
+                                                            aria-hidden="true"></i></a>
+                                                <li v-else><button @click.prevent="getPosts(next_page)"><i
+                                                            class="fa fa-angle-right" aria-hidden="true"></i></button>
                                                 </li>
                                             </ul>
                                         </div>
@@ -167,7 +179,9 @@
                         </div>
                         <div class="featured-flat">
                             <div class="row">
-                                <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                                <div class="col-md-12">
+                                    <div id="div1" v-on:drop="drop" v-on:dragover="allowDrop" style="display: flex"></div>
+                                </div>
                                 <br>
                             </div>
                         </div>
@@ -185,56 +199,55 @@
                 current: 1,
                 pages: null,
                 next_page: null,
-                previous_page: null
+                previous_page: null,
+                dropped: []
             },
             methods: {
                 pg_click(pg) {
                     this.current = pg;
                 },
-                getPosts(curpage){
+                getPosts(curpage) {
                     axios
-                    .get(`http://localhost:3000/api/index/iklan/${curpage}`)
-                    .then(response => {
-                        this.resData = response.data.data
-                        this.current = response.data.current
-                        this.pages = response.data.pages
-                        this.next_page = response.data.next_page
-                        this.previous_page = response.data.previous_page
-                    })
+                        .get(`http://localhost:3000/api/index/iklan/${curpage}`)
+                        .then(response => {
+                            this.resData = response.data.data
+                            this.current = response.data.current
+                            this.pages = response.data.pages
+                            this.next_page = response.data.next_page
+                            this.previous_page = response.data.previous_page
+                        })
                 },
-                currentPG(){
+                currentPG() {
                     this.current++
+                },
+
+                dragStart: function(ev) {
+                    ev.dataTransfer.setData("text", ev.target.id);
+                },
+                allowDrop: function(ev) {
+                    ev.preventDefault();
+                },
+
+                drop: function(ev) {
+                    ev.preventDefault();
+                    var data = ev.dataTransfer.getData("text");
+                    ev.target.appendChild(document.getElementById(data));
+                    this.dropped.push(data);
+                    console.log(this.dropped)
                 }
             },
             computed: {
-                displayedPosts(){
+                displayedPosts() {
                     return this.resData
-                },
-                imagesArray() {
-                    return this.resData[0].gambar.split(',')
                 }
             },
-            created(){
+            created() {
                 this.getPosts(this.current);
             },
             mounted() {
-                
+
             }
         })
-
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        }
-
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.appendChild(document.getElementById(data));
-        }
     </script>
 </body>
 <%- include('../partials/footer') %>
