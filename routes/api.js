@@ -97,13 +97,17 @@ module.exports = function (db) {
         })
     })
 
-    router.get('/iklan/:page', (req, res) => {
+    router.get('/iklan/:page/:harga/:kategori', (req, res) => {
         const per_page = 3;
         const page = req.params.page || 1;
-        var sql_all = `SELECT * FROM iklan ORDER BY created_date DESC`;
+        const harga = req.params.harga;
+        const kategori = req.params.kategori;
+        
+        var sql_all = `SELECT * FROM iklan ${kategori !== 'def' ? 'WHERE kategori = '+ kategori : ''} ORDER BY ${harga !== 'def' ? 'harga':'created_date'} ${harga !== 'def' ? harga : 'DESC'}`;
         db.query(sql_all, (err, result_all) => {
             if (err) { res.status(400).json({ "error": err.message }); return; }
-            var sql = `SELECT * FROM iklan ORDER BY created_date DESC LIMIT 3 OFFSET ${(page - 1) * per_page}`;
+            var sql = `SELECT * FROM iklan ${kategori !== 'def' ? 'WHERE kategori = '+ kategori : ''} ORDER BY ${harga !== 'def' ? 'harga':'created_date'} ${harga !== 'def' ? harga : 'DESC'} LIMIT 3 OFFSET ${(page - 1) * per_page}`;
+            console.log(sql)
             db.query(sql, (err, result) => {
                 if (err) {
                     res.send('Gagal memuat data')

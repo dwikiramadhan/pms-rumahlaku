@@ -33,25 +33,42 @@
 
         <!-- Start page content -->
         <section id="page-content" class="page-wrapper">
-            <!-- FIND HOME AREA START -->
-            <div class="find-home-area bg-blue call-to-bg plr-140 pt-60 pb-20">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-3 col-xs-12">
-                            <div class="section-title text-white">
-                                <h3>FIND YOUR</h3>
-                                <h2 class="h1">HOME HERE</h2>
+            <div id="app">
+                <!-- FIND HOME AREA START -->
+                <div class="find-home-area bg-blue call-to-bg plr-140 pt-60 pb-20">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-3 col-xs-12">
+                                <div class="section-title text-white">
+                                    <h3>FIND YOUR</h3>
+                                    <h2 class="h1">HOME HERE</h2>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-9 col-xs-12">
-                            <div class="find-homes">
-                                <div class="row">
-                                    <div class="col-sm-3 col-xs-12">
-                                        <div class="find-home-item">
-                                            <input type="text" name="min-area" placeholder="Min area (sqft)">
+                            <div class="col-md-9 col-xs-12">
+                                <div class="find-homes">
+                                    <div class="row">
+                                        <div class="col-sm-3 col-xs-12">
+                                            <div class="find-home-item">
+                                                <!-- <input type="text" name="min-area" placeholder="Min area (sqft)"> -->
+                                                <select class="form-control" id="exampleFormControlSelect1" v-model="kategoriFilt" @change="getPosts(current, hargaFilt, kategoriFilt)">
+                                                    <option disabled value="">Pilih Kategori</option>
+                                                    <option value="0">Sewa</option>
+                                                    <option value="1">Jual</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-3 col-xs-12">
+                                        <div class="col-sm-3 col-xs-12">
+                                            <div class="find-home-item">
+                                                <!-- <input type="text" name="max-area" placeholder="Max area (sqft)"> -->
+                                                <select class="form-control" id="exampleFormControlSelect2"
+                                                    v-model="hargaFilt" @change="getPosts(current, hargaFilt, kategoriFilt)">
+                                                    <option disabled value="">Sort Harga</option>
+                                                    <option value="asc">Murah - Mahal</option>
+                                                    <option value="desc">Mahal - Murah</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="col-sm-3 col-xs-12">
                                         <div class="find-home-item">
                                             <input type="text" name="max-area" placeholder="Max area (sqft)">
                                         </div>
@@ -60,17 +77,13 @@
                                         <div class="find-home-item">
                                             <input type="text" name="max-area" placeholder="Max area (sqft)">
                                         </div>
-                                    </div>
-                                    <div class="col-sm-3 col-xs-12">
-                                        <div class="find-home-item">
-                                            <input type="text" name="max-area" placeholder="Max area (sqft)">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-xs-12">
-                                        <div class="row">
-                                            <div class="col-sm-5 col-xs-12">
-                                                <div class="find-home-item mb-0-xs">
-                                                    <a class="button-1 btn-block btn-hover-1" href="#">SEARCH</a>
+                                    </div> -->
+                                        <div class="col-sm-6 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-sm-5 col-xs-12">
+                                                    <div class="find-home-item mb-0-xs">
+                                                        <button class="button-1 btn-block btn-hover-1" @click.prevent="getPosts()">SEARCH</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,231 +93,240 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- FIND HOME AREA END -->
+                <!-- FIND HOME AREA END -->
 
-            <!-- FEATURED FLAT AREA START -->
-            <div class="featured-flat-area pt-30 pb-80" id="app">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="section-title-2" style="margin: 0px">
-                                <h2>Featured</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="featured-flat">
-                        <div class="row">
-
-                            <!-- flat-item -->
-                            <div class="col-md-4 col-sm-6 col-xs-12" v-for="(res, index) in displayedPosts"
-                                draggable="true" v-on:dragstart="dragStart" v-bind:id="JSON.stringify(res)">
-                                <div class="flat-item">
-                                    <div class="flat-item-image">
-                                        <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
-                                        <span class="for-sale rent" v-if="res.kategori == 0">Disewakan</span>
-                                        <a href="properties-details.html">
-                                            <img v-bind:src="'/images/uploads/' + res.gambar.split(',')[0]" alt="">
-                                        </a>
-                                        <div class="flat-link">
-                                            <a :href="'/properties-details/' + res.id_iklan">More Details</a>
-                                        </div>
-                                        <ul class="flat-desc">
-                                            <li>
-                                                <img src="images/icons/4.png" alt="">
-                                                <span>{{ res.ukuran }} m<sup>2</sup></span>
-                                            </li>
-                                            <li>
-                                                <img src="images/icons/5.png" alt="">
-                                                <span>{{ res.kamar_tidur ? res.kamar_tidur : '0' }}</span>
-                                            </li>
-                                            <li>
-                                                <img src="images/icons/6.png" alt="">
-                                                <span>{{ res.kamar_mandi ? res.kamar_mandi : '0' }}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="flat-item-info">
-                                        <div class="flat-title-price">
-                                            <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
-                                            <span class="price">Rp.
-                                                {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
-                                        </div>
-                                        <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ELEMENTS AREA START -->
-                        <div class="">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="pagination-area">
-                                            <ul class="pagination-list text-center">
-                                                <li v-if="current == 1"><a><i class="fa fa-angle-left"
-                                                            aria-hidden="true"></i></a></li>
-                                                <li v-else><button @click.prevent="getPosts(previous_page)"><i
-                                                            class="fa fa-angle-left" aria-hidden="true"></i></button>
-                                                </li>
-                                                <li v-for="pg in pages">
-                                                    <button v-if="pg == current" class="active">{{ pg }}</button>
-                                                    <button v-else @click.prevent="getPosts(pg)">{{ pg }}</button>
-                                                </li>
-                                                <li v-if="current == pages"><a><i class="fa fa-angle-right"
-                                                            aria-hidden="true"></i></a>
-                                                <li v-else><button @click.prevent="getPosts(next_page)"><i
-                                                            class="fa fa-angle-right" aria-hidden="true"></i></button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ELEMENTS AREA END -->
-                    </div>
-                </div>
-                <!-- FEATURED FLAT AREA END -->
-
-                <!-- DRAG & DROP -->
+                <!-- FEATURED FLAT AREA START -->
                 <div class="featured-flat-area pt-30 pb-80">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="section-title-2" style="margin: 0px">
-                                    <h2>Bandingkan</h2>
+                                    <h2>Featured {{ hargaFilt }}</h2>
                                 </div>
                             </div>
                         </div>
                         <div class="featured-flat">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <div id="div1" v-on:drop="drop" v-on:dragover="allowDrop"
-                                        style="display: flex; overflow: hidden">
-                                        <!-- flat-item -->
-                                        <div class="col-md-4 col-sm-6 col-xs-12" v-for="res in displayedDropped">
-                                            <div class="flat-item">
-                                                <div class="flat-item-image">
-                                                    <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
-                                                    <span class="for-sale rent"
-                                                        v-if="res.kategori == 0">Disewakan</span>
-                                                    <a href="properties-details.html">
-                                                        <img v-bind:src="'/images/uploads/' + res.gambar.split(',')[0]"
-                                                            alt="">
-                                                    </a>
-                                                    <div class="flat-link">
-                                                        <a :href="'/properties-details/' + res.id_iklan">More
-                                                            Details</a>
-                                                    </div>
-                                                    <ul class="flat-desc">
-                                                        <li>
-                                                            <img src="images/icons/4.png" alt="">
-                                                            <span>{{ res.ukuran }} m<sup>2</sup></span>
-                                                        </li>
-                                                        <li>
-                                                            <img src="images/icons/5.png" alt="">
-                                                            <span>{{ res.kamar_tidur ? res.kamar_tidur : '0' }}</span>
-                                                        </li>
-                                                        <li>
-                                                            <img src="images/icons/6.png" alt="">
-                                                            <span>{{ res.kamar_mandi ? res.kamar_mandi : '0' }}</span>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="flat-item-info">
-                                                    <div class="flat-title-price">
-                                                        <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
-                                                        <span class="price">Rp.
-                                                            {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
-                                                    </div>
-                                                    <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}
-                                                    </p>
-                                                </div>
+
+                                <!-- flat-item -->
+                                <div class="col-md-4 col-sm-6 col-xs-12" v-for="(res, index) in displayedPosts"
+                                    draggable="true" v-on:dragstart="dragStart" v-bind:id="JSON.stringify(res)">
+                                    <div class="flat-item">
+                                        <div class="flat-item-image">
+                                            <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
+                                            <span class="for-sale rent" v-if="res.kategori == 0">Disewakan</span>
+                                            <a href="properties-details.html">
+                                                <img v-bind:src="'/images/uploads/' + res.gambar.split(',')[0]" alt="">
+                                            </a>
+                                            <div class="flat-link">
+                                                <a :href="'/properties-details/' + res.id_iklan">More Details</a>
+                                            </div>
+                                            <ul class="flat-desc">
+                                                <li>
+                                                    <img src="images/icons/4.png" alt="">
+                                                    <span>{{ res.ukuran }} m<sup>2</sup></span>
+                                                </li>
+                                                <li>
+                                                    <img src="images/icons/5.png" alt="">
+                                                    <span>{{ res.kamar_tidur ? res.kamar_tidur : '0' }}</span>
+                                                </li>
+                                                <li>
+                                                    <img src="images/icons/6.png" alt="">
+                                                    <span>{{ res.kamar_mandi ? res.kamar_mandi : '0' }}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="flat-item-info">
+                                            <div class="flat-title-price">
+                                                <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
+                                                <span class="price">Rp.
+                                                    {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
+                                            </div>
+                                            <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ELEMENTS AREA START -->
+                            <div class="">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="pagination-area">
+                                                <ul class="pagination-list text-center">
+                                                    <li v-if="current == 1"><a><i class="fa fa-angle-left" aria-hidden="true"></i></a></li>
+                                                    <li v-else><button @click.prevent="pp_click(); getPosts(current, hargaFilt, kategoriFilt)"><i class="fa fa-angle-left" aria-hidden="true"></i></button>
+                                                    </li>
+                                                    <li v-for="pg in pages">
+                                                        <button v-if="pg == current" class="active">{{ pg }}</button>
+                                                        <button v-else @click.prevent="pg_click(pg); getPosts(current, hargaFilt, kategoriFilt)">{{ pg }}</button>
+                                                    </li>
+                                                    <li v-if="current == pages"><a><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                                    <li v-else><button @click.prevent="np_click(); getPosts(current, hargaFilt, kategoriFilt)"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <br><br>
-                                <div class="col-md-12" style="text-align: center;">
-                                    <button @click.prevent="compare" class="btn btn-primary">Mulai Bandingkan</button>
+                            </div>
+                            <!-- ELEMENTS AREA END -->
+                        </div>
+                    </div>
+                    <!-- FEATURED FLAT AREA END -->
+
+                    <!-- DRAG & DROP -->
+                    <div class="featured-flat-area pt-30 pb-80">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="section-title-2" style="margin: 0px">
+                                        <h2>Bandingkan {{current}}</h2>
+                                    </div>
                                 </div>
-                                <br>
+                            </div>
+                            <div class="featured-flat">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div id="div1" v-on:drop="drop" v-on:dragover="allowDrop"
+                                            style="display: flex; overflow: hidden">
+                                            <!-- flat-item -->
+                                            <div class="col-md-4 col-sm-6 col-xs-12" v-for="res in displayedDropped">
+                                                <div class="flat-item">
+                                                    <div class="flat-item-image">
+                                                        <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
+                                                        <span class="for-sale rent"
+                                                            v-if="res.kategori == 0">Disewakan</span>
+                                                        <a href="properties-details.html">
+                                                            <img v-bind:src="'/images/uploads/' + res.gambar.split(',')[0]"
+                                                                alt="">
+                                                        </a>
+                                                        <div class="flat-link">
+                                                            <a :href="'/properties-details/' + res.id_iklan">More
+                                                                Details</a>
+                                                        </div>
+                                                        <ul class="flat-desc">
+                                                            <li>
+                                                                <img src="images/icons/4.png" alt="">
+                                                                <span>{{ res.ukuran }} m<sup>2</sup></span>
+                                                            </li>
+                                                            <li>
+                                                                <img src="images/icons/5.png" alt="">
+                                                                <span>{{ res.kamar_tidur ? res.kamar_tidur : '0' }}</span>
+                                                            </li>
+                                                            <li>
+                                                                <img src="images/icons/6.png" alt="">
+                                                                <span>{{ res.kamar_mandi ? res.kamar_mandi : '0' }}</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="flat-item-info">
+                                                        <div class="flat-title-price">
+                                                            <h5><a href="properties-details.html">{{ res.alamat }}</a>
+                                                            </h5>
+                                                            <span class="price">Rp.
+                                                                {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
+                                                        </div>
+                                                        <p><img src="images/icons/location.png"
+                                                                alt="">{{ res.sertifikat }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br><br>
+                                    <div class="col-md-12" style="text-align: center;">
+                                        <button @click.prevent="compare" class="btn btn-primary">Mulai
+                                            Bandingkan</button>
+                                    </div>
+                                    <br>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!-- DRAG END DROP END -->
                 </div>
-                <!-- DRAG END DROP END -->
         </section>
     </div>
-    <script>
-        var app = new Vue({
-            el: '#app',
-            data: {
-                message: 'Hello Vue',
-                resData: [],
-                current: 1,
-                pages: null,
-                next_page: null,
-                previous_page: null,
-                dropped: []
-            },
-            methods: {
-                compare() {
-                    let idCollect = []
-                    this.dropped.forEach(items => {
-                        idCollect.push(items.id_iklan)
-                    });
-                    window.location = "/compare?selectedId=" + idCollect.join('+')
-                },
-                pg_click(pg) {
-                    this.current = pg;
-                },
-                getPosts(curpage) {
-                    axios
-                        .get(`http://localhost:3000/api/index/iklan/${curpage}`)
-                        .then(response => {
-                            this.resData = response.data.data
-                            this.current = response.data.current
-                            this.pages = response.data.pages
-                            this.next_page = response.data.next_page
-                            this.previous_page = response.data.previous_page
-                        })
-                },
-                currentPG() {
-                    this.current++
-                },
-
-                dragStart: function (ev) {
-                    ev.dataTransfer.setData("text/plain", ev.target.id);
-                },
-                allowDrop: function (ev) {
-                    ev.preventDefault();
-                },
-
-                drop: function (ev) {
-                    ev.preventDefault();
-                    var data = ev.dataTransfer.getData("text");
-                    this.dropped.push(JSON.parse(data));
-                    // ev.target.appendChild(document.getElementById(data));
-                }
-            },
-            computed: {
-                displayedPosts() {
-                    return this.resData
-                },
-                displayedDropped() {
-                    return this.dropped
-                }
-            },
-            created() {
-                this.getPosts(this.current);
-            },
-            mounted() {
-
-            }
-        })
-    </script>
 </body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue',
+            resData: [],
+            current: 1,
+            pages: null,
+            next_page: null,
+            previous_page: null,
+            dropped: [],
+            kategoriFilt: false,
+            hargaFilt: false
+        },
+        methods: {
+            compare() {
+                let idCollect = []
+                this.dropped.forEach(items => {
+                    idCollect.push(items.id_iklan)
+                });
+                window.location = "/compare?selectedId=" + idCollect.join('+')
+            },
+            pg_click(pg) {
+                this.current = pg;
+            },
+            np_click(){
+                this.current++
+                // console.log(this.current)
+            },
+            pp_click(){
+                this.current--
+                // console.log(this.current)
+            },
+            getPosts(curpage, hargaFilt, kategoriFilt) {
+                axios
+                    .get(`http://localhost:3000/api/index/iklan/${curpage}/${hargaFilt ? hargaFilt : 'def'}/${kategoriFilt ? kategoriFilt : 'def'}`)
+                    .then(response => {
+                        this.resData = response.data.data
+                        this.current = response.data.current
+                        this.pages = response.data.pages
+                        this.next_page = response.data.next_page
+                        this.previous_page = response.data.previous_page
+                    })
+            },
+            currentPG() {
+                this.current++
+            },
+
+            dragStart: function (ev) {
+                ev.dataTransfer.setData("text/plain", ev.target.id);
+            },
+            allowDrop: function (ev) {
+                ev.preventDefault();
+            },
+
+            drop: function (ev) {
+                ev.preventDefault();
+                var data = ev.dataTransfer.getData("text");
+                this.dropped.push(JSON.parse(data));
+                // ev.target.appendChild(document.getElementById(data));
+            }
+        },
+        computed: {
+            displayedPosts() {
+                return this.resData
+            },
+            displayedDropped() {
+                return this.dropped
+            }
+        },
+        created() {
+            this.getPosts(this.current, this.hargaFilt, this.kategoriFilt);
+        },
+        mounted() {
+
+        }
+    })
+</script>
 <%- include('../partials/footer') %>
