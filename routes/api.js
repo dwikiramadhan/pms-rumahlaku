@@ -120,46 +120,6 @@ module.exports = function (db) {
         })
     })
 
-    router.get('/properties-details/:id', (req, res) => {
-        var { id } = req.params;
-        var sql = `SELECT i.*, m.nama_lengkap, m.no_telp FROM iklan as i LEFT JOIN member as m ON i.id_member = m.id WHERE i.id_iklan = ${id}`;
-        db.query(sql, (err, result) => {
-            if (err) {
-                res.send('Gagal memuat data iklan')
-            } else {
-                res.json(result.rows)
-            }
-        })
-    })
-
-    router.put('/changepassword/:id', (req, res) => {
-        var { id } = req.params;
-        var { password } = req.body;
-
-        let myKey = crypto.createCipher("aes-128-cbc", "mypassword");
-        let myStr = myKey.update(password, "utf8", "hex");
-        myStr += myKey.final("hex");
-
-        const hashPass = myStr;
-        var sql = `SELECT password_hash FROM member WHERE id = ${id}`;
-        db.query(sql, (err, result) => {
-            if (result.rows.password_hash === hashPass) {
-                var sql_update = `UPDATE member SET password_hash = '${hashPass}' WHERE id = ${id}`;
-                db.query(sql_update, (err, result) => {
-                    if (err) res.send('Gagal');
-                    res.json({
-                        msg: 'Berhasil update Password'
-                    })
-                })
-            } else {
-                res.json({
-                    msg: 'Password lama Salah.'
-                })
-            }
-        })
-
-    })
-
     router.post('/iklan', (req, res) => {
         var { alamat, harga, ukuran, coordinate, deskripsi, id_member, kategori, kamar_mandi, kamar_tidur, sertifikat, lantai } = req.body;
 
@@ -206,6 +166,59 @@ module.exports = function (db) {
                 })
             }
         })
+    })
+
+    router.get('/compare/:id', (req, res) => {
+        var { id } = req.params;
+        let rep = id.replace("+",",")
+        var sql = `SELECT * FROM iklan WHERE id_iklan IN (${rep})`;
+        db.query(sql, (err, result) => {
+            if (err) {
+                res.send('Gagal memuat data iklan')
+            } else {
+                res.json(result.rows)
+            }
+        })
+    })
+
+    router.get('/properties-details/:id', (req, res) => {
+        var { id } = req.params;
+        var sql = `SELECT i.*, m.nama_lengkap, m.no_telp FROM iklan as i LEFT JOIN member as m ON i.id_member = m.id WHERE i.id_iklan = ${id}`;
+        db.query(sql, (err, result) => {
+            if (err) {
+                res.send('Gagal memuat data iklan')
+            } else {
+                res.json(result.rows)
+            }
+        })
+    })
+
+    router.put('/changepassword/:id', (req, res) => {
+        var { id } = req.params;
+        var { password } = req.body;
+
+        let myKey = crypto.createCipher("aes-128-cbc", "mypassword");
+        let myStr = myKey.update(password, "utf8", "hex");
+        myStr += myKey.final("hex");
+
+        const hashPass = myStr;
+        var sql = `SELECT password_hash FROM member WHERE id = ${id}`;
+        db.query(sql, (err, result) => {
+            if (result.rows.password_hash === hashPass) {
+                var sql_update = `UPDATE member SET password_hash = '${hashPass}' WHERE id = ${id}`;
+                db.query(sql_update, (err, result) => {
+                    if (err) res.send('Gagal');
+                    res.json({
+                        msg: 'Berhasil update Password'
+                    })
+                })
+            } else {
+                res.json({
+                    msg: 'Password lama Salah.'
+                })
+            }
+        })
+
     })
 
     router.get('/coordinate', (req, res) => {

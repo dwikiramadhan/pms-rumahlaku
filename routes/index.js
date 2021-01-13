@@ -24,6 +24,14 @@ module.exports = function (db) {
     });
   });
 
+  router.get('/compare', function (req, res, next) {
+    res.render('pages/compare', {
+      title: 'Compare Pages',
+      user: req.session.user,
+      isLogin: req.session.loggedIn
+    })
+  })
+
   router.get('/register', function (req, res, next) {
     res.render('pages/register', {
       title: 'Express',

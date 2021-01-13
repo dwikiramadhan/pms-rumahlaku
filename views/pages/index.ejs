@@ -16,6 +16,7 @@
         background: #95c41f none repeat scroll 0 0;
         color: white;
     }
+
     #div1 {
         box-shadow: rgba(49, 53, 59, 0.12) 0px 1px 6px;
         border: 1px dashed #aaaaaa;
@@ -97,7 +98,7 @@
 
                             <!-- flat-item -->
                             <div class="col-md-4 col-sm-6 col-xs-12" v-for="(res, index) in displayedPosts"
-                                draggable="true" v-on:dragstart="dragStart" v-bind:id="res.id_iklan">
+                                draggable="true" v-on:dragstart="dragStart" v-bind:id="JSON.stringify(res)">
                                 <div class="flat-item">
                                     <div class="flat-item-image">
                                         <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
@@ -180,7 +181,54 @@
                         <div class="featured-flat">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div id="div1" v-on:drop="drop" v-on:dragover="allowDrop" style="display: flex"></div>
+                                    <div id="div1" v-on:drop="drop" v-on:dragover="allowDrop"
+                                        style="display: flex; overflow: hidden">
+                                        <!-- flat-item -->
+                                        <div class="col-md-4 col-sm-6 col-xs-12" v-for="res in displayedDropped">
+                                            <div class="flat-item">
+                                                <div class="flat-item-image">
+                                                    <span class="for-sale" v-if="res.kategori == 1">Dijual</span>
+                                                    <span class="for-sale rent"
+                                                        v-if="res.kategori == 0">Disewakan</span>
+                                                    <a href="properties-details.html">
+                                                        <img v-bind:src="'/images/uploads/' + res.gambar.split(',')[0]"
+                                                            alt="">
+                                                    </a>
+                                                    <div class="flat-link">
+                                                        <a :href="'/properties-details/' + res.id_iklan">More
+                                                            Details</a>
+                                                    </div>
+                                                    <ul class="flat-desc">
+                                                        <li>
+                                                            <img src="images/icons/4.png" alt="">
+                                                            <span>{{ res.ukuran }} m<sup>2</sup></span>
+                                                        </li>
+                                                        <li>
+                                                            <img src="images/icons/5.png" alt="">
+                                                            <span>{{ res.kamar_tidur ? res.kamar_tidur : '0' }}</span>
+                                                        </li>
+                                                        <li>
+                                                            <img src="images/icons/6.png" alt="">
+                                                            <span>{{ res.kamar_mandi ? res.kamar_mandi : '0' }}</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="flat-item-info">
+                                                    <div class="flat-title-price">
+                                                        <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
+                                                        <span class="price">Rp.
+                                                            {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
+                                                    </div>
+                                                    <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <div class="col-md-12" style="text-align: center;">
+                                    <button @click.prevent="compare" class="btn btn-primary">Mulai Bandingkan</button>
                                 </div>
                                 <br>
                             </div>
@@ -203,6 +251,13 @@
                 dropped: []
             },
             methods: {
+                compare() {
+                    let idCollect = []
+                    this.dropped.forEach(items => {
+                        idCollect.push(items.id_iklan)
+                    });
+                    window.location = "/compare?selectedId=" + idCollect.join('+')
+                },
                 pg_click(pg) {
                     this.current = pg;
                 },
@@ -221,24 +276,26 @@
                     this.current++
                 },
 
-                dragStart: function(ev) {
-                    ev.dataTransfer.setData("text", ev.target.id);
+                dragStart: function (ev) {
+                    ev.dataTransfer.setData("text/plain", ev.target.id);
                 },
-                allowDrop: function(ev) {
+                allowDrop: function (ev) {
                     ev.preventDefault();
                 },
 
-                drop: function(ev) {
+                drop: function (ev) {
                     ev.preventDefault();
                     var data = ev.dataTransfer.getData("text");
-                    ev.target.appendChild(document.getElementById(data));
-                    this.dropped.push(data);
-                    console.log(this.dropped)
+                    this.dropped.push(JSON.parse(data));
+                    // ev.target.appendChild(document.getElementById(data));
                 }
             },
             computed: {
                 displayedPosts() {
                     return this.resData
+                },
+                displayedDropped() {
+                    return this.dropped
                 }
             },
             created() {
