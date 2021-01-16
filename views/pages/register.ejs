@@ -51,7 +51,7 @@
                                             </div>
                                         </div>
                                         <input type="text" name='alamat' id='alamat' placeholder="Alamat">
-                                        <input type="text" name='email' id='email' placeholder="Email">
+                                        <input type="text" name='email_new' id='email_new' placeholder="Email">
                                         <input type="password" name='password_member' id='password_member'
                                             placeholder="Password">
                                         <!-- <input type="password" name='re-password' id = 're-password'  placeholder="Confirm Password"> -->
@@ -73,7 +73,7 @@
         <!-- End page content -->
     </div>
     <script>
-        const API_URL = 'http://localhost:3000/api/index';
+        // const API_URL = 'http://localhost:3000/api/index';
 
         $(document).ready(function () {
             regis();
@@ -87,12 +87,9 @@
                 let no_telp = $('#no_telp');
                 let tgl_lahir = $('#tgl_lahir');
                 let alamat = $('#alamat');
-                let email = $('#email');
+                let email = $('#email_new');
                 let password_member = $('#password_member');
 
-                console.log(nama_lengkap.val())
-                console.log(jenis_kelamin.val())
-                console.log(no_telp.val())
                 $.ajax({
                     url: `http://localhost:3000/api/index/register`,
                     method: 'POST',

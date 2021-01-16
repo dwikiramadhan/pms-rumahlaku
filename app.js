@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
   secret: "Shh, its a secret!",
-  resave: true,
-  saveUninitialized: true
+  // resave: true,
+  // saveUninitialized: true
 }));
 
 app.use(fileUpload());

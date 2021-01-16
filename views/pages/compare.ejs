@@ -73,6 +73,7 @@
                     .get(`http://localhost:3000/api/index/compare/${this.desire}`)
                     .then(response => {
                         this.resData = response.data
+                        console.log(this.resData)
                     })
                     .catch(error => {
                         console.log(response.error)

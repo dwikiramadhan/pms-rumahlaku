@@ -40,40 +40,24 @@
         integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
         crossorigin="anonymous"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_-3tuAmYaX0s3fOtVFK9kRxk9DNeO88Q&callback=initMap&libraries=&v=weekly"
-        defer>
-        </script>
+    <script 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_-3tuAmYaX0s3fOtVFK9kRxk9DNeO88Q&callback=initMap&libraries=&v=weekly" async defer></script>
 
     <script>
         let map;
         var corArray = []
         axios.get('http://localhost:3000/api/index/coordinate')
-        .then(response => {
-            var coordsArray = response.data.data;
-            for (let i = 0; i < coordsArray.length; i++) {
-                var coords = coordsArray[i];
-                corArray.push(coords.coordinate.x + ', ' + coords.coordinate.y);
-                
-            }
-            // console.log(coords.coordinate)
-        })
+            .then(response => {
+                var coordsArray = response.data.data;
+                for (let i = 0; i < coordsArray.length; i++) {
+                    var coords = coordsArray[i];
+                    corArray.push(coords.coordinate.x + ', ' + coords.coordinate.y);
+
+                }
+                // console.log(coords.coordinate)
+            })
         // console.log(corArray)
-        function initMap() {
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: -6.923735, lng: 107.688739 },
-                zoom: 12,
-            });
-            for (let i = 0; i < corArray.length; i++) {
-                let splitCoord = corArray[i].split(", ");
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(parseFloat(splitCoord[0]), parseFloat(splitCoord[1])),
-                    map: map
-                });
-            }
-    
-        }
-        google.maps.event.addDomListener(window, 'load', initMap);
+
     </script>
 </head>
 
@@ -107,9 +91,8 @@
 </style>
 <header>
     <nav class="navbar navbar-light bg-light" style="padding: .5rem 2.5rem">
-        <a class="navbar-brand" href="/"><img
-                src="https://ecs7.tokopedia.net/assets-tokopedia-lite/v2/zeus/production/e5b8438b.svg" height="30"
-                class="d-inline-block align-top" alt=""></a>
+        <a class="navbar-brand" href="/"><img src="/images/logo.svg" height="35" class="d-inline-block align-top"
+                alt=""></a>
         <div>
             <!-- <a href="/register" class="btn btn-outline-success my-2 my-sm-0">Register</a> -->
             <% if(isLogin){ %>
@@ -124,9 +107,14 @@
                 <div class="dropdown show">
                     <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
+                        <% if(user.gambar != null){ %>
+                        <img src="/images/uploads/users/<%= user.gambar %>" style="height: 40px; border-radius: 50%;"
+                            alt="<%= user.nama_lengkap %>" class="img-thumbnail">
+                        <% }else{ %>
                         <img src="https://images.vexels.com/media/users/3/147102/isolated/preview/082213cb0f9eabb7e6715f59ef7d322a-instagram-profile-icon-by-vexels.png"
                             style="height: 40px; border-radius: 50%;" alt="<%= user.nama_lengkap %>"
                             class="img-thumbnail">
+                        <% } %>
                         <span><%= user.nama_lengkap %></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">

@@ -1,4 +1,76 @@
 <%- include('../partials/header') %>
+<style>
+    #upload {
+        opacity: 0;
+    }
+
+    #upload-label {
+        position: relative;
+        top: 64%;
+        margin-bottom: 30px;
+        /* left: 1rem; */
+        /* transform: translateY(-50%); */
+    }
+
+    .image-area {
+        border: 2px dashed rgba(255, 255, 255, 0.7);
+        padding: 1rem;
+        position: relative;
+    }
+
+    .image-area::before {
+        content: 'Uploaded image result';
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.8rem;
+        z-index: 1;
+    }
+
+    .image-area img {
+        z-index: 2;
+        position: relative;
+    }
+
+    #imageResult {
+        height: 100px;
+    }
+
+    .box-upload {
+        box-sizing: border-box;
+        box-shadow: rgba(49, 53, 59, 0.12) 0px 1px 6px;
+        border-radius: 50%;
+        margin-right: 12px;
+        background: rgb(255, 255, 255);
+        border: 1px dashed rgb(203, 208, 203);
+        height: 150px;
+        padding: 10px;
+        display: flex;
+    }
+
+    .content-upload {
+        display: flex;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        place-content: center;
+        width: inherit;
+        height: inherit;
+        -webkit-box-align: center;
+        align-items: center;
+        width: 130px;
+        height: 130px;
+        border: 1px solid rgb(79, 209, 90);
+        border-radius: 50%;
+    }
+
+    .round {
+        border-radius: 50%
+    }
+</style>
 
 <body>
     <div class="wrapper">
@@ -11,7 +83,21 @@
                     <div class="row">
                         <div class="col-md-6 col-xs-12">
                             <div class="registered-customers mb-50">
-                                <h5 class="mb-50" v-for="p in posts">EDIT PROFIL</h5>
+                                <h5 class="mb-30" v-for="p in posts">EDIT PROFIL</h5>
+                                <input id="upload" type="file" ref="myFiles" name="file" @change="readURL()"
+                                    class="form-control border-0" style="display: none" multiple />
+
+                                <label for="upload">
+                                    <div class="box-upload" id="upload-label">
+                                        <div class="content-upload" v-for="p in posts">
+                                            <img id="imageResult1"
+                                                src="https://images.vexels.com/media/users/3/147102/isolated/preview/082213cb0f9eabb7e6715f59ef7d322a-instagram-profile-icon-by-vexels.png"
+                                                alt="" class="img-fluid round mx-auto d-block" v-if="p.gambar == null">
+                                            <img id="imageResult1" v-bind:src="'/images/uploads/users/' + p.gambar"
+                                                alt="" class="img-fluid round mx-auto d-block" v-else>
+                                        </div>
+                                    </div>
+                                </label>
                                 <form @submit.prevent="submit">
                                     <div class="login-account p-30 box-shadow">
                                         <p>Masukkan data sebenar-benarnya.</p>
@@ -60,13 +146,12 @@
                                 <h5 class="mb-50">UBAH PASSWORD</h5>
                                 <form @submit.prevent="submitPassword">
                                     <div class="login-account p-30 box-shadow">
-                                        <input type="password" placeholder="Password Lama" v-model="old_password">
-
+                                        <input type="password" placeholder="Password Lama" v-model="old_password" @change.prevent = "cekOldPassword">
+                                        <span v-if="cek_old_password == 'true'">Password match..</span>
+                                        <span v-else-if="cek_old_password == 'fa lse'">Password not match..</span>
                                         <input type="password" placeholder="Password Baru" v-model="new_password">
-
                                         <input type="password" placeholder="Konfirmasi Password Baru"
                                             v-model="re_password">
-
                                         <div class="row">
                                             <div class="col-sm-6 col-xs-12">
                                                 <button class="submit-btn-1 mt-20" type="submit">Confirm</button>
@@ -97,7 +182,8 @@
                 date: null,
                 old_password: null,
                 new_password: null,
-                re_password: null
+                re_password: null,
+                cek_old_password: null
             },
             methods: {
                 submit() {
@@ -136,6 +222,41 @@
                             alert(response.data.msg)
                         })
 
+                },
+
+                cekOldPassword() {
+                    this.id = this.$el.getAttribute('data-id');
+
+                    axios
+                        .post(`http://localhost:3000/api/index/cekoldpass/${this.id}`, {
+                            password_hash: this.old_password
+                        })
+                        .then(response => {
+                            this.cek_old_password = response.data.msg
+                            console.log(this.cek_old_password)
+                        })
+                        .catch(e => { this.errors.push(e) })
+                },
+
+                async readURL() {
+                    this.id = this.$el.getAttribute('data-id');
+                    const file = this.$refs.myFiles.files;
+
+                    var formData = new FormData();
+                    formData.append('file', file[0]);
+                    await axios.put(`http://localhost:3000/api/index/changepp/${this.id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil Update Gambar.',
+                            showCloseButton: true
+                        })
+                    }).catch(error => {
+                        console.log(response.error)
+                    })
                 }
             },
             mounted: function () {
@@ -156,6 +277,33 @@
                 }
             }
         })
+
+        $(document).ready(function () {
+            let readURL = function (input) {
+                if (input.files) {
+                    let filesAmount = input.files.length;
+                    for (let i = 0; i < filesAmount; i++) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            // $($.parseHTML("<img style='width: 100px'>"))
+                            //     .attr("src", e.target.result)
+                            //     .appendTo(placeToInsertImagePreview)
+                            $(`#imageResult${i + 1}`).attr('src', e.target.result);
+                        };
+                        reader.readAsDataURL(input.files[i]);
+                    }
+                }
+            };
+            $(function () {
+                $('#upload').on('change', function () {
+                    readURL(this)
+                });
+            });
+        })
+
+
+        var input = document.getElementById('upload');
+        var infoArea = document.getElementById('upload-label');
     </script>
 </body>
 <%- include('../partials/footer') %>

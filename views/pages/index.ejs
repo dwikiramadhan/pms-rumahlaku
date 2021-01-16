@@ -25,6 +25,24 @@
 </style>
 
 <body>
+    <script>
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -6.923735, lng: 107.688739 },
+                zoom: 12,
+            });
+            // console.log(corArray)
+            for (let i = 0; i < corArray.length; i++) {
+                let splitCoord = corArray[i].split(", ");
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(parseFloat(splitCoord[0]), parseFloat(splitCoord[1])),
+                    map: map
+                });
+            }
+
+        }
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
     <div class="wrapper">
 
         <!-- Start Google Maps -->
@@ -50,6 +68,7 @@
                                         <div class="col-sm-3 col-xs-12">
                                             <div class="find-home-item">
                                                 <!-- <input type="text" name="min-area" placeholder="Min area (sqft)"> -->
+                                                <h5 style="color: white">Filter Kategori</h5 style="color: white">
                                                 <select class="form-control" id="exampleFormControlSelect1" v-model="kategoriFilt" @change="getPosts(current, hargaFilt, kategoriFilt)">
                                                     <option disabled value="">Pilih Kategori</option>
                                                     <option value="0">Sewa</option>
@@ -60,6 +79,7 @@
                                         <div class="col-sm-3 col-xs-12">
                                             <div class="find-home-item">
                                                 <!-- <input type="text" name="max-area" placeholder="Max area (sqft)"> -->
+                                                <h5 style="color: white">Filter Harga</h5 style="color: white">
                                                 <select class="form-control" id="exampleFormControlSelect2"
                                                     v-model="hargaFilt" @change="getPosts(current, hargaFilt, kategoriFilt)">
                                                     <option disabled value="">Sort Harga</option>
@@ -78,7 +98,7 @@
                                             <input type="text" name="max-area" placeholder="Max area (sqft)">
                                         </div>
                                     </div> -->
-                                        <div class="col-sm-6 col-xs-12">
+                                        <!-- <div class="col-sm-6 col-xs-12">
                                             <div class="row">
                                                 <div class="col-sm-5 col-xs-12">
                                                     <div class="find-home-item mb-0-xs">
@@ -86,7 +106,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +121,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="section-title-2" style="margin: 0px">
-                                    <h2>Featured {{ hargaFilt }}</h2>
+                                    <h2>Featured</h2>
                                 </div>
                             </div>
                         </div>
@@ -138,11 +158,11 @@
                                         </div>
                                         <div class="flat-item-info">
                                             <div class="flat-title-price">
-                                                <h5><a href="properties-details.html">{{ res.alamat }}</a></h5>
+                                                <h5><img src="images/icons/location.png" alt=""><a href="properties-details.html">{{ res.alamat }}</a></h5>
                                                 <span class="price">Rp.
                                                     {{ res.harga.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") }}</span>
                                             </div>
-                                            <p><img src="images/icons/location.png" alt="">{{ res.sertifikat }}</p>
+                                            <p>{{ res.sertifikat }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -182,7 +202,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="section-title-2" style="margin: 0px">
-                                        <h2>Bandingkan {{current}}</h2>
+                                        <h2>Bandingkan</h2>
+                                        <span class="text-muted">Tarik iklan diatas</span>
                                     </div>
                                 </div>
                             </div>
@@ -190,7 +211,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div id="div1" v-on:drop="drop" v-on:dragover="allowDrop"
-                                            style="display: flex; overflow: hidden">
+                                            style="display: flex; overflow: hidden; min-height: 200px;">
                                             <!-- flat-item -->
                                             <div class="col-md-4 col-sm-6 col-xs-12" v-for="res in displayedDropped">
                                                 <div class="flat-item">
@@ -237,9 +258,8 @@
                                         </div>
                                     </div>
                                     <br><br>
-                                    <div class="col-md-12" style="text-align: center;">
-                                        <button @click.prevent="compare" class="btn btn-primary">Mulai
-                                            Bandingkan</button>
+                                    <div class="col-md-12" style="text-align: center; margin-top: 20px;">
+                                        <button @click.prevent="compare" class="btn btn-success my-2 my-sm-0" style="font-size: 16px; border-radius: 20px; background-color: #95c41f; border-color: #95c41f;">Mulai Bandingkan</button>
                                     </div>
                                     <br>
                                 </div>
@@ -250,83 +270,83 @@
                 </div>
         </section>
     </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue',
+                resData: [],
+                current: 1,
+                pages: null,
+                next_page: null,
+                previous_page: null,
+                dropped: [],
+                kategoriFilt: false,
+                hargaFilt: false
+            },
+            methods: {
+                compare() {
+                    let idCollect = []
+                    this.dropped.forEach(items => {
+                        idCollect.push(items.id_iklan)
+                    });
+                    window.location = "/compare?selectedId=" + idCollect.join('+')
+                },
+                pg_click(pg) {
+                    this.current = pg;
+                },
+                np_click(){
+                    this.current++
+                    // console.log(this.current)
+                },
+                pp_click(){
+                    this.current--
+                    // console.log(this.current)
+                },
+                getPosts(curpage, hargaFilt, kategoriFilt) {
+                    axios
+                        .get(`http://localhost:3000/api/index/iklan/${curpage}/${hargaFilt ? hargaFilt : 'def'}/${kategoriFilt ? kategoriFilt : 'def'}`)
+                        .then(response => {
+                            this.resData = response.data.data
+                            this.current = response.data.current
+                            this.pages = response.data.pages
+                            this.next_page = response.data.next_page
+                            this.previous_page = response.data.previous_page
+                        })
+                },
+                currentPG() {
+                    this.current++
+                },
+
+                dragStart: function (ev) {
+                    ev.dataTransfer.setData("text/plain", ev.target.id);
+                },
+                allowDrop: function (ev) {
+                    ev.preventDefault();
+                },
+
+                drop: function (ev) {
+                    ev.preventDefault();
+                    var data = ev.dataTransfer.getData("text");
+                    this.dropped.push(JSON.parse(data));
+                    // ev.target.appendChild(document.getElementById(data));
+                }
+            },
+            computed: {
+                displayedPosts() {
+                    return this.resData
+                },
+                displayedDropped() {
+                    return this.dropped
+                }
+            },
+            created() {
+                this.getPosts(this.current, this.hargaFilt, this.kategoriFilt);
+            },
+            mounted() {
+
+            }
+        })
+    </script>
 </body>
-<script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            message: 'Hello Vue',
-            resData: [],
-            current: 1,
-            pages: null,
-            next_page: null,
-            previous_page: null,
-            dropped: [],
-            kategoriFilt: false,
-            hargaFilt: false
-        },
-        methods: {
-            compare() {
-                let idCollect = []
-                this.dropped.forEach(items => {
-                    idCollect.push(items.id_iklan)
-                });
-                window.location = "/compare?selectedId=" + idCollect.join('+')
-            },
-            pg_click(pg) {
-                this.current = pg;
-            },
-            np_click(){
-                this.current++
-                // console.log(this.current)
-            },
-            pp_click(){
-                this.current--
-                // console.log(this.current)
-            },
-            getPosts(curpage, hargaFilt, kategoriFilt) {
-                axios
-                    .get(`http://localhost:3000/api/index/iklan/${curpage}/${hargaFilt ? hargaFilt : 'def'}/${kategoriFilt ? kategoriFilt : 'def'}`)
-                    .then(response => {
-                        this.resData = response.data.data
-                        this.current = response.data.current
-                        this.pages = response.data.pages
-                        this.next_page = response.data.next_page
-                        this.previous_page = response.data.previous_page
-                    })
-            },
-            currentPG() {
-                this.current++
-            },
-
-            dragStart: function (ev) {
-                ev.dataTransfer.setData("text/plain", ev.target.id);
-            },
-            allowDrop: function (ev) {
-                ev.preventDefault();
-            },
-
-            drop: function (ev) {
-                ev.preventDefault();
-                var data = ev.dataTransfer.getData("text");
-                this.dropped.push(JSON.parse(data));
-                // ev.target.appendChild(document.getElementById(data));
-            }
-        },
-        computed: {
-            displayedPosts() {
-                return this.resData
-            },
-            displayedDropped() {
-                return this.dropped
-            }
-        },
-        created() {
-            this.getPosts(this.current, this.hargaFilt, this.kategoriFilt);
-        },
-        mounted() {
-
-        }
-    })
-</script>
 <%- include('../partials/footer') %>

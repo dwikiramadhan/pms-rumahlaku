@@ -18,16 +18,21 @@
                             <div class="about-image">
                                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                                     <ol class="carousel-indicators">
-                                        <li data-target="#carouselExampleIndicators" v-for="(item, index) in imagesArray" v-if="index == 0" data-slide-to="index" class="active"></li>
+                                        <li data-target="#carouselExampleIndicators"
+                                            v-for="(item, index) in imagesArray" v-if="index == 0" data-slide-to="index"
+                                            class="active"></li>
                                         <li data-target="#carouselExampleIndicators" v-else data-slide-to="index"></li>
                                         <!-- <li data-target="#carouselExampleIndicators" data-slide-to="2"></li> -->
                                     </ol>
                                     <div class="carousel-inner">
-                                        <div v-for="(item, index) in imagesArray" v-if="index == 0" class="carousel-item active">
-                                            <img class="d-block w-100" v-bind:src="'/images/uploads/' + item" alt="First slide">
+                                        <div v-for="(item, index) in imagesArray" v-if="index == 0"
+                                            class="carousel-item active">
+                                            <img class="d-block w-100" v-bind:src="'/images/uploads/' + item"
+                                                alt="First slide">
                                         </div>
                                         <div v-else class="carousel-item">
-                                            <img class="d-block w-100" v-bind:src="'/images/uploads/' + item" alt="First slide">
+                                            <img class="d-block w-100" v-bind:src="'/images/uploads/' + item"
+                                                alt="First slide">
                                         </div>
                                     </div>
                                     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
@@ -118,7 +123,22 @@
             </div>
             <!-- ABOUT SHELTEK AREA END -->
         </section>
+        <div id="map"></div>
     </div>
+    <!-- <script>
+        function initMap() {
+            const myLatLng = { lat: -25.363, lng: 131.044 };
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -6.923735, lng: 107.688739 },
+                zoom: 12,
+            });
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(-6.919482345885846, 107.68424625833397),
+                map: map
+            });
+        }
+        // google.maps.event.addDomListener(window, 'load', initMap);
+    </script> -->
     <script>
         var app = new Vue({
             el: '#app',
@@ -126,22 +146,51 @@
                 message: 'Hello Vue!',
                 id_iklan: null,
                 posts: [],
-                image: []
+                image: [],
+                map: null
             },
-            mounted: function () {
-                this.id_iklan = this.$el.getAttribute('data-id');
-                axios
-                    .get(`http://localhost:3000/api/index/properties-details/${this.id_iklan}`)
-                    .then(response => {
-                        this.posts = response.data
+            methods: {
+                getdataLoad() {
+                    this.id_iklan = this.$el.getAttribute('data-id');
+                    axios
+                        .get(`http://localhost:3000/api/index/properties-details/${this.id_iklan}`)
+                        .then(response => {
+                            this.posts = response.data
+                        })
+                        .catch(e => { this.errors.push(e) })
+                },
+                initMap() {
+                    this.map = new google.maps.Map(document.getElementById("map"), {
+                        center: { lat: -6.923735, lng: 107.688739 },
+                        zoom: 12,
+                    });
+                },
+                async setMarker(){
+                    this.id_iklan = this.$el.getAttribute('data-id');
+                    let coordinate = []
+                    await axios
+                        .get(`http://localhost:3000/api/index/properties-details/${this.id_iklan}`)
+                        .then(response => {
+                            coordinate.push(response.data[0].coordinate);
+                        })
+                        .catch(e => { this.errors.push(e) })
+                    let getCoordinate = {lat: coordinate[0].x, lng: coordinate[0].y}
+                    // console.log(getCoordinate)
+                    const markers = new google.maps.Marker({
+                        position: getCoordinate,
+                        map: this.map
                     })
-                    .catch(e => { this.errors.push(e) })
-
+                }
+            },
+            mounted() {
+                this.getdataLoad();
+                this.initMap();
+                this.setMarker()
             },
             computed: {
-                imagesArray: function() {
+                imagesArray: function () {
                     return this.posts[0].gambar.split(',')
-                }
+                },
             }
         })
     </script>

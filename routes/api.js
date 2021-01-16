@@ -5,6 +5,10 @@ const crypto = require("crypto");
 const upload = require('express-fileupload');
 const FormData = require('form-data')
 const path = require('path')
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
+const someOtherPlaintextPassword = 'not_bacon';
 
 module.exports = function (db) {
     router.get('/', function (req, res) {
@@ -13,39 +17,39 @@ module.exports = function (db) {
 
     router.post('/login', (req, res) => {
         var { email, password } = req.body;
-        let myKey = crypto.createCipher("aes-128-cbc", "mypassword");
-        let myStr = myKey.update(password, "utf8", "hex");
-        myStr += myKey.final("hex");
 
-        const hashPass = myStr;
-
-        var sql = `SELECT * FROM member WHERE email = '${email}' AND password_hash = '${hashPass}'`;
-
+        var sql = `SELECT * FROM member WHERE email = '${email}'`
         db.query(sql, (err, result) => {
-            if (err) {
+            if (result.rows.length != 0) {
+                var sql2 = `SELECT * FROM member WHERE email = '${email}'`
+                db.query(sql2, (err, result) => {
+                    bcrypt.compare(password, result.rows[0].password_hash, function(err, result2) {
+                        if (result2) {
+                            const user = result.rows[0];
+                            req.session.user = user;
+                            req.session.loggedIn = true;
+                            res.json({
+                                msg: 'logged_in',
+                                session: req.session.user
+                            })
+                        }else{
+                            res.json({
+                                msg: 'not_match'
+                            })
+                        }
+                    });
+                })
+            }else{
                 res.json({
-                    msg: err
-                });
-            } else {
-                if (result.rows.length == 0) {
-                    res.json({
-                        msg: 'not_match'
-                    })
-                } else {
-                    const user = result.rows[0];
-                    req.session.user = user;
-                    req.session.loggedIn = true;
-                    res.json({
-                        msg: 'logged_in',
-                        session: req.session.user
-                    })
-                }
+                    msg: 'not_match'
+                })
             }
         })
     })
 
     router.get('/profil/:id', (req, res) => {
         const { id } = req.params;
+        console.log(id)
         var sql = `SELECT * FROM member WHERE id = ${id}`;
         db.query(sql, (err, result) => {
             if (err) {
@@ -102,11 +106,11 @@ module.exports = function (db) {
         const page = req.params.page || 1;
         const harga = req.params.harga;
         const kategori = req.params.kategori;
-        
-        var sql_all = `SELECT * FROM iklan ${kategori !== 'def' ? 'WHERE kategori = '+ kategori : ''} ORDER BY ${harga !== 'def' ? 'harga':'created_date'} ${harga !== 'def' ? harga : 'DESC'}`;
+
+        var sql_all = `SELECT * FROM iklan ${kategori !== 'def' ? 'WHERE kategori = ' + kategori : ''} ORDER BY ${harga !== 'def' ? 'harga' : 'created_date'} ${harga !== 'def' ? harga : 'DESC'}`;
         db.query(sql_all, (err, result_all) => {
             if (err) { res.status(400).json({ "error": err.message }); return; }
-            var sql = `SELECT * FROM iklan ${kategori !== 'def' ? 'WHERE kategori = '+ kategori : ''} ORDER BY ${harga !== 'def' ? 'harga':'created_date'} ${harga !== 'def' ? harga : 'DESC'} LIMIT 3 OFFSET ${(page - 1) * per_page}`;
+            var sql = `SELECT * FROM iklan ${kategori !== 'def' ? 'WHERE kategori = ' + kategori : ''} ORDER BY ${harga !== 'def' ? 'harga' : 'created_date'} ${harga !== 'def' ? harga : 'DESC'} LIMIT 3 OFFSET ${(page - 1) * per_page}`;
             console.log(sql)
             db.query(sql, (err, result) => {
                 if (err) {
@@ -172,9 +176,83 @@ module.exports = function (db) {
         })
     })
 
+    router.put('/changepp/:id', (req, res) => {
+        var { id } = req.params;
+
+        function makeid(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = mm + '_' + yyyy;
+        
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
+        }
+
+        // // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+        let foto = req.files.file;
+        let filename = today + '_' + makeid(10) + '0' + '.jpg';
+        
+        // // Use the mv() method to place the file somewhere on your server
+        foto.mv(path.join(__dirname, '..', 'public', 'images', 'uploads', 'users', filename), function (err) {
+            if (err) return res.status(500).send(err);
+        });
+        
+        console.log(filename)
+
+        var sql = `UPDATE member SET gambar = '${filename}' WHERE id = ${id}`;
+        console.log(sql)
+        db.query(sql, (err, result) => {
+            if (err) {
+                res.send('Gagal')
+            } else {
+                res.json({
+                    msg: 'success'
+                })
+            }
+        })
+    })
+
+    router.post('/cekoldpass/:id', (req, res) => {
+        var { id } = req.params;
+        var { password_hash } = req.body;
+
+        var sql = `SELECT password_hash FROM member WHERE id = ${id}`;
+        console.log(sql)
+        db.query(sql, (err, result) => {
+            if (err) {
+                res.send('Query failed')
+            }else{
+                console.log()
+                bcrypt.compare(password_hash, result.rows[0].password_hash, function(err, hasil) {
+                    // result == true
+                    if (hasil) {
+                        res.json({
+                            msg: 'true'
+                        })
+                    }else{
+                        res.json({
+                            msg: 'false'
+                        })
+                    }
+                });
+            }
+        })
+    })
+
     router.get('/compare/:id', (req, res) => {
         var { id } = req.params;
-        let rep = id.replace("+",",")
+        let rep = id.split('+').join(',')
         var sql = `SELECT * FROM iklan WHERE id_iklan IN (${rep})`;
         db.query(sql, (err, result) => {
             if (err) {
@@ -250,13 +328,6 @@ module.exports = function (db) {
         var { nama_lengkap, jenis_kelamin, no_telp, tgl_lahir, alamat, email, password_member } = req.body;
 
         var sql = `SELECT * FROM member WHERE email = '${email}'`;
-
-        let myKey = crypto.createCipher("aes-128-cbc", "mypassword");
-        let myStr = myKey.update(password_member, "utf8", "hex");
-        myStr += myKey.final("hex");
-
-        const hashPass = myStr;
-
         db.query(sql, (err, result) => {
             if (err) {
                 res.send('Gagal');
@@ -267,18 +338,23 @@ module.exports = function (db) {
                         msg: 'emailexist'
                     });
                 } else {
-                    var sql_insert = `INSERT INTO member (nama_lengkap, jenis_kelamin, tgl_lahir, alamat, no_telp, email, password_hash, date_created) VALUES ('${nama_lengkap}', '${jenis_kelamin}', '${tgl_lahir}', '${alamat}', '${no_telp}', '${email}', '${hashPass}', current_timestamp)`;
-                    db.query(sql_insert, (err, result) => {
+                    bcrypt.hash(password_member, saltRounds, function (err, hash) {
                         if (err) {
-                            res.json({
-                                msg: 'insertfailed'
-                            })
-                        } else {
-                            res.json({
-                                msg: 'success'
-                            });
+                            res.send('Gagal ngehash')
                         }
-                    })
+                        var sql_insert = `INSERT INTO member (nama_lengkap, jenis_kelamin, tgl_lahir, alamat, no_telp, email, password_hash, date_created) VALUES ('${nama_lengkap}', '${jenis_kelamin}', '${tgl_lahir}', '${alamat}', '${no_telp}', '${email}', '${hash}', current_timestamp)`;
+                        db.query(sql_insert, (err, result) => {
+                            if (err) {
+                                res.json({
+                                    msg: 'insertfailed'
+                                })
+                            } else {
+                                res.json({
+                                    msg: 'success'
+                                });
+                            }
+                        })
+                    });
                 }
             }
         })

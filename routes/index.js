@@ -48,7 +48,7 @@ module.exports = function (db) {
     });
   });
 
-  router.get('/profil', function (req, res, next) {
+  router.get('/profil', isLoggedin, function (req, res, next) {
     res.render('pages/profil', {
       title: 'Profil',
       user: req.session.user,
